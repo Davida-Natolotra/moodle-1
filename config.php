@@ -4,21 +4,21 @@ unset($CFG);
 global $CFG;
 $CFG = new stdClass();
 
-$CFG->dbtype    = getenv('DATABASE_TYPE');
+$CFG->dbtype    = 'pgsql';
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = getenv('DATABASE_HOST');
-$CFG->dbname    = getenv('DATABASE_NAME');
-$CFG->dbuser    = getenv('DATABASE_USER');
-$CFG->dbpass    = getenv('DATABASE_PASSWORD');
+$CFG->dbhost    = 'ec2-3-212-75-25.compute-1.amazonaws.com';
+$CFG->dbname    = 'd2cc0gndojds6p';
+$CFG->dbuser    = 'klooeletpnrgqp';
+$CFG->dbpass    = '2668e3447914bd576a7d74f4ca479db72fdde645465b2b4a6e74ae983efe0dcc';
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
-  'dbport' => getenv('DATABASE_PORT'),
+  'dbport' => '5432',
   'dbsocket' => '',
 );
 
-$CFG->wwwroot   = getenv('WWWROOT');
-$CFG->dataroot  = getenv('DATAROOT');
+$CFG->wwwroot   = 'http://fiofananamg.herokuapp.com';
+$CFG->dataroot  = '/tmp';
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
