@@ -38,10 +38,7 @@ function theme_trema_get_main_scss_content($theme) {
 
     $scss = '';
     $scss .= file_get_contents("$CFG->dirroot/theme/trema/scss/defaultvariables.scss");
-
-    $filename = !empty($theme->settings->preset) ? $theme->settings->preset : 'trema.scss';
-
-    $scss .= file_get_contents("$CFG->dirroot/theme/trema/scss/preset/{$filename}");
+    $scss .= file_get_contents("$CFG->dirroot/theme/trema/scss/styles.scss");
 
     if ($frontpagebannerurl = $theme->setting_file_url('frontpagebanner', 'frontpagebanner')) {
         $scss .= "#frontpage-banner {background-image: url([[pix:theme|frontpage/overlay]]), url('$frontpagebannerurl');}";
@@ -277,92 +274,24 @@ function get_environment_issues() {
     $cache = cache::make('theme_trema', 'dashboardadmin');
     $environmentissues = $cache->get('environmentissues');
     if (!$environmentissues) {
-        $issues = \core\check\manager::get_security_checks();
+        require_once("$CFG->dirroot/report/performance/locallib.php");
+        $lib = new report_performance();
+        $issues = [];
+        $issues['themedesignermode'] = $lib->report_performance_check_themedesignermode();
+        $issues['cachejs'] = $lib->report_performance_check_cachejs();
+        $issues['debugmsg'] = $lib->report_performance_check_debugmsg();
+        $issues['automatic_backup'] = $lib->report_performance_check_automatic_backup();
+        $issues['enablestats'] = $lib->report_performance_check_enablestats();
 
         // Prevent warnings.
-        $environmentissues["ok"]      = 0;
+        $environmentissues["ok"] = 0;
         $environmentissues["warning"] = 0;
         foreach ($issues as $issue) {
-            $result = $issue->get_result()->status;
-            if ($result == 'serious' || $result == 'critical' || $result == 'warning') {
+            if ($issue->status == 'serious' || $issue->status == 'critical' || $issue->status == 'warning') {
                 $environmentissues['warning'] ++;
             }
         }
         $cache->set('environmentissues', $environmentissues);
     }
     return $environmentissues;
-}
-
-/**
- * Get the URL of files from theme settings.
- *
- * @param $setting
- * @param $filearea
- * @param $theme
- * @return moodle_url|string|string[]|null
- * @throws dml_exception
- */
-function theme_trema_setting_file_url($setting, $filearea, $theme) {
-    global $CFG;
-
-    $component  = 'theme_trema';
-    $itemid     = 0;
-    $filepath   = $theme->settings->$filearea;
-
-    if (empty($filepath)) {
-        return false;
-    }
-    $syscontext = context_system::instance();
-
-    $url = moodle_url::make_file_url("$CFG->wwwroot/pluginfile.php", "/$syscontext->id/$component/$filearea/$itemid".$filepath);
-
-    // Now this is tricky because the we can not hardcode http or https here, lets use the relative link.
-    // Note: unfortunately moodle_url does not support //urls yet.
-
-    $url = preg_replace('|^https?://|i', '//', $url->out(false));
-
-    return $url;
-}
-
-
-/**
- * MoodlePage init for adding classes to body tag.
- *
- * @param moodle_page $page
- * @throws coding_exception
- */
-function theme_trema_page_init(moodle_page $page) {
-    global $COURSE, $USER;
-
-    // Add admin classes.
-    $page->add_body_class(is_siteadmin() ? "is_siteadmin" : "not_siteadmin");
-
-    // Add module idnumber class.
-    if (in_array($page->pagelayout, ['incourse']) && !empty($page->cm->idnumber)) {
-        $page->add_body_class("idnumber-{$page->cm->idnumber}");
-    }
-
-    // Add role classes.
-    if (in_array($page->pagelayout, ['course', 'incourse'])) {
-        $context = context_course::instance($COURSE->id);
-        if (user_has_role_assignment($USER->id, 5, $context->id)) {
-            $page->add_body_class('is_student');
-        }
-        if (user_has_role_assignment($USER->id, 4, $context->id)) {
-            $page->add_body_class('is_teacher');
-        }
-        if (user_has_role_assignment($USER->id, 3, $context->id)) {
-            $page->add_body_class('is_editingteacher');
-        }
-    }
-
-    // Load course style by shortname from: /style/course/$shortname.css.
-    if ($COURSE->id > 1) {
-        $shortname   = explode('|', $COURSE->shortname);
-        $shortname   = trim($shortname[0]);
-        $coursestyle = "/style/course/{$shortname}.css";
-        if (file_exists($page->theme->dir.$coursestyle)) {
-            $page->requires->css(new moodle_url("/theme/trema{$coursestyle}"));
-        }
-    }
 }

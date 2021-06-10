@@ -58,7 +58,6 @@ $templatecontext = [
     'footerinfo' => $pluginsettings->enablefooterinfo,
 ];
 
-$nav                                     = $PAGE->flatnav;
-$templatecontext['flatnavigation']       = $nav;
-$templatecontext['firstcollectionlabel'] = $nav->get_collectionlabel();
+$templatecontext['flatnavigation'] = $PAGE->flatnav;
 echo $OUTPUT->render_from_template('theme_trema/columns2', $templatecontext);
+
