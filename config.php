@@ -6,10 +6,10 @@ $CFG = new stdClass();
 
 $CFG->dbtype    = 'pgsql';
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = 'ec2-3-212-75-25.compute-1.amazonaws.com';
-$CFG->dbname    = 'd2cc0gndojds6p';
-$CFG->dbuser    = 'klooeletpnrgqp';
-$CFG->dbpass    = '2668e3447914bd576a7d74f4ca479db72fdde645465b2b4a6e74ae983efe0dcc';
+$CFG->dbhost    = 'ec2-52-5-1-20.compute-1.amazonaws.com';
+$CFG->dbname    = 'df9l9cqbsalacl';
+$CFG->dbuser    = 'zkeokuwualvykc';
+$CFG->dbpass    = 'e64d492cf23a59e8fdc52d70f6db16712c47ac9b014b2125294820db9b737c83';
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
@@ -17,7 +17,7 @@ $CFG->dboptions = array (
   'dbsocket' => '',
 );
 
-$CFG->wwwroot   = 'http://fiofananamg.herokuapp.com';
+$CFG->wwwroot   = 'http://fiofanana.herokuapp.com';
 $CFG->dataroot  = '/tmp';
 $CFG->admin     = 'admin';
 
